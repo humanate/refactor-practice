@@ -1,14 +1,11 @@
 package com.refactor.practice;
 
-import com.google.common.collect.Lists;
-
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Vector;
 
 public class Customer {
 	private String _name;
-	private Vector _rentals = new Vector();
+	private Vector _rentals;
 
 	public Customer(String _name, Vector _rentals) {
 		this._name = _name;
