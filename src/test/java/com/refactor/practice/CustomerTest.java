@@ -28,9 +28,23 @@ public class CustomerTest {
 		addRental(customer, "new movie", Movie.NEW_RELEASE, 2);
 		addRental(customer, "children movie", Movie.CHILDRENS, 5);
 		//when
-		String result = customer.statement();
+		String result = customer.getStatement();
 		//then
 		assertThat(result).isEqualTo(baseline);
+	}
+
+	@Test
+	public void calculate_amount_frequent_points_of_rentals() {
+		//given
+		addRental(customer, "regular movie", Movie.REGULAR, 3);
+		addRental(customer, "new movie", Movie.NEW_RELEASE, 2);
+		addRental(customer, "children movie", Movie.CHILDRENS, 5);
+		//when
+		double amount = customer.calculateTotalAmount();
+		double frequentRenterPoints = customer.calculateFrequentRenterPoints();
+		//then
+		assertThat(amount).isEqualTo(14.0d);
+		assertThat(frequentRenterPoints).isEqualTo(4.0d);
 	}
 
 	private void addRental(Customer customer, String movieTitle, int movieType, int dayRented) {
