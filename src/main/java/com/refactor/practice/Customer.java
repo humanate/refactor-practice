@@ -1,6 +1,5 @@
 package com.refactor.practice;
 
-import java.util.Enumeration;
 import java.util.Objects;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -8,24 +7,24 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Customer {
 
-  private String _name;
-  private Vector<Rental> _rentals;
+  private String name;
+  private Vector<Rental> rentals;
 
-  public Customer(String _name, Vector<Rental> _rentals) {
-    this._name = _name;
-    this._rentals = _rentals;
+  public Customer(String name, Vector<Rental> rentals) {
+    this.name = name;
+    this.rentals = rentals;
   }
 
   private String getName() {
-    return _name;
+    return name;
   }
 
   public void addRental(Rental arg) {
-    _rentals.add(arg);
+    rentals.add(arg);
   }
 
   private Rental getRental(MovieType movieType) {
-    return _rentals.stream()
+    return rentals.stream()
         .filter(it -> Objects.equals(it.getMovie().triggerType(), movieType))
         .findAny()
         .orElseThrow(() -> new RuntimeException("Movie is not found"));
@@ -37,16 +36,14 @@ public class Customer {
 
   public double calculateTotalAmount() {
     AtomicReference<Double> totalAmount = new AtomicReference<>((double) 0);
-    _rentals.forEach(it -> totalAmount.updateAndGet(v -> v + calculateThisAmount(it)));
+    rentals.forEach(it -> totalAmount.updateAndGet(v -> v + calculateThisAmount(it)));
     return totalAmount.get();
   }
 
   public int calculateFrequentRenterPoints() {
     AtomicInteger frequentRenterPoints = new AtomicInteger(0);
-    _rentals.forEach(it -> {
-      //add frequent renter points
+    rentals.forEach(it -> {
       frequentRenterPoints.getAndIncrement();
-      //add bonus for a two day new release rental
       if ((it.getMovie().triggerType() == MovieType.NEW_RELEASE) &&
           it.getDayRented() > 1) {
         frequentRenterPoints.getAndIncrement();
@@ -57,18 +54,18 @@ public class Customer {
   }
 
   public String getStatement() {
-    Enumeration rentals = _rentals.elements();
-    String result = "Rental Record for " + getName() + "\n";
-    while (rentals.hasMoreElements()) {
-      Rental each = (Rental) rentals.nextElement();
-      //show figures for this rental
-      result += "\t" + each.getMovie().get_title() +
-          "\t" + String.valueOf(calculateThisAmount(each)) + "\n";
-    }
-    //add footer lines
-    result += "Amount owed is " + String.valueOf(calculateTotalAmount()) + "\n";
-    result += "You earned" + String.valueOf(calculateFrequentRenterPoints()) +
-        " frequent renter points";
-    return result;
+    StringBuilder result = new StringBuilder("Rental Record for " + getName() + "\n");
+
+    rentals.forEach(it -> result.append("\t").append(it.getMovie().getTitle()).append("\t")
+        .append(calculateThisAmount(it)).append("\n"));
+    result.append("Amount owed is ").append(calculateTotalAmount()).append("\n");
+    result.append("You earned").append(calculateFrequentRenterPoints())
+        .append(" frequent renter points");
+    return result.toString();
+  }
+
+  public String getStatementHtml() {
+
+    return null;
   }
 }

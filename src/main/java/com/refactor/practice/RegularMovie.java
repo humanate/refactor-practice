@@ -2,8 +2,8 @@ package com.refactor.practice;
 
 public class RegularMovie extends AbstractMovie {
 
-  public RegularMovie(String _title) {
-    super(_title);
+  public RegularMovie(String title) {
+    super(title);
   }
 
   @Override

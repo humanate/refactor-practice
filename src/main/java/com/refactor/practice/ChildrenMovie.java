@@ -2,8 +2,8 @@ package com.refactor.practice;
 
 public class ChildrenMovie extends AbstractMovie {
 
-  public ChildrenMovie(String _title) {
-    super(_title);
+  public ChildrenMovie(String title) {
+    super(title);
   }
 
   @Override

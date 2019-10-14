@@ -2,16 +2,17 @@ package com.refactor.practice;
 
 public abstract class AbstractMovie {
 
-  private String _title;
+  private String title;
 
-  AbstractMovie(String _title) {
-    this._title = _title;
+  AbstractMovie(String title) {
+    this.title = title;
   }
 
-  String get_title() {
-    return _title;
+  String getTitle() {
+    return title;
   }
 
   public abstract MovieType triggerType();
+
   public abstract Double doCalculate(Rental rental);
 }
