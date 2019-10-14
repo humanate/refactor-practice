@@ -24,9 +24,9 @@ public class CustomerTest {
 	@Test
 	public void should_get_statement_of_rentals() {
 		//given
-		addRental(customer, "regular movie", Movie.REGULAR, 3);
-		addRental(customer, "new movie", Movie.NEW_RELEASE, 2);
-		addRental(customer, "children movie", Movie.CHILDRENS, 5);
+		addRental(customer, new RegularMovie("regular movie"), 3);
+		addRental(customer, new NewReleaseMovie("new movie"), 2);
+		addRental(customer, new ChildrenMovie("children movie"), 5);
 		//when
 		String result = customer.getStatement();
 		//then
@@ -36,9 +36,9 @@ public class CustomerTest {
 	@Test
 	public void calculate_amount_frequent_points_of_rentals() {
 		//given
-		addRental(customer, "regular movie", Movie.REGULAR, 3);
-		addRental(customer, "new movie", Movie.NEW_RELEASE, 2);
-		addRental(customer, "children movie", Movie.CHILDRENS, 5);
+		addRental(customer, new RegularMovie("regular movie"), 3);
+		addRental(customer, new NewReleaseMovie("new movie"), 2);
+		addRental(customer, new ChildrenMovie("children movie"), 5);
 		//when
 		double amount = customer.calculateTotalAmount();
 		double frequentRenterPoints = customer.calculateFrequentRenterPoints();
@@ -47,8 +47,7 @@ public class CustomerTest {
 		assertThat(frequentRenterPoints).isEqualTo(4.0d);
 	}
 
-	private void addRental(Customer customer, String movieTitle, int movieType, int dayRented) {
-		Movie movie = new Movie(movieTitle, movieType);
+	private void addRental(Customer customer, AbstractMovie movie, int dayRented) {
 		Rental rental = new Rental(movie, dayRented);
 		customer.addRental(rental);
 	}

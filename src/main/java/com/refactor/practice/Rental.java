@@ -1,19 +1,19 @@
 package com.refactor.practice;
 
 public class Rental {
-	private Movie _movie;
+	private AbstractMovie _movie;
 
 	private int _dayRented;
-	public Rental(Movie movie, int dayRented) {
+	public Rental(AbstractMovie movie, int dayRented) {
 		_movie = movie;
 		_dayRented = dayRented;
 	}
 
-	public Movie getMovie() {
+	AbstractMovie getMovie() {
 		return _movie;
 	}
 
-	public int getDayRented() {
+	int getDayRented() {
 		return _dayRented;
 	}
 }

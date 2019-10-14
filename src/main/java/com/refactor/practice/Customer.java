@@ -1,136 +1,74 @@
 package com.refactor.practice;
 
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Customer {
-	private String _name;
-	private Vector _rentals;
 
-	public Customer(String _name, Vector _rentals) {
-		this._name = _name;
-		this._rentals = _rentals;
-	}
+  private String _name;
+  private Vector<Rental> _rentals;
 
-	public String getName() {
-		return _name;
-	}
+  public Customer(String _name, Vector<Rental> _rentals) {
+    this._name = _name;
+    this._rentals = _rentals;
+  }
 
-	public void addRental(Rental arg) {
-		_rentals.add(arg);
-	}
+  private String getName() {
+    return _name;
+  }
 
-	public String statement() {
-		double totalAmount = 0;
-		int frequentRenterPoints = 0;
-		Enumeration rentals = _rentals.elements();
-		String result = "Rental Record for " + getName() + "\n";
-		while (rentals.hasMoreElements()) {
-			double thisAmount = 0D;
-			Rental each = (Rental) rentals.nextElement();
+  public void addRental(Rental arg) {
+    _rentals.add(arg);
+  }
 
-			//determine amounts for each line
-			switch (each.getMovie().getPriceCode()) {
-				case Movie.REGULAR:
-					thisAmount += 2;
-					if (each.getDayRented() > 2) {
-						thisAmount += (each.getDayRented() - 2) * 1.5;
-					}
-					break;
-				case Movie.NEW_RELEASE:
-					thisAmount += each.getDayRented() * 3;
-					break;
-				case Movie.CHILDRENS:
-					thisAmount += 1.5;
-					if (each.getDayRented() > 3) {
-						thisAmount += (each.getDayRented() - 3) * 1.5;
-					}
-					break;
-			}
-			//add frequent renter points
-			frequentRenterPoints++;
-			//add bonus for a two day new release rental
-			if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE) &&
-					each.getDayRented() > 1) {
-				frequentRenterPoints++;
-			}
+  private Rental getRental(MovieType movieType) {
+    return _rentals.stream()
+        .filter(it -> Objects.equals(it.getMovie().triggerType(), movieType))
+        .findAny()
+        .orElseThrow(() -> new RuntimeException("Movie is not found"));
+  }
 
-			//show figures for this rental
-			result += "\t" + each.getMovie().getTitle() +
-					"\t" + String.valueOf(thisAmount) + "\n";
-			totalAmount += thisAmount;
-		}
-		//add footer lines
-		result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
-		result += "You earned" + String.valueOf(frequentRenterPoints) +
-				" frequent renter points";
-		return result;
-	}
+  private double calculateThisAmount(Rental rental) {
+    return getRental(rental.getMovie().triggerType()).getMovie().doCalculate(rental);
+  }
 
-	private double calculateThisAmount(Rental each){
-		double thisAmount = 0D;
+  public double calculateTotalAmount() {
+    AtomicReference<Double> totalAmount = new AtomicReference<>((double) 0);
+    _rentals.forEach(it -> totalAmount.updateAndGet(v -> v + calculateThisAmount(it)));
+    return totalAmount.get();
+  }
 
-			//determine amounts for each line
-			switch (each.getMovie().getPriceCode()) {
-				case Movie.REGULAR:
-					thisAmount += 2;
-					if (each.getDayRented() > 2) {
-						thisAmount += (each.getDayRented() - 2) * 1.5;
-					}
-					break;
-				case Movie.NEW_RELEASE:
-					thisAmount += each.getDayRented() * 3;
-					break;
-				case Movie.CHILDRENS:
-					thisAmount += 1.5;
-					if (each.getDayRented() > 3) {
-						thisAmount += (each.getDayRented() - 3) * 1.5;
-					}
-					break;
-			}
-			return thisAmount;
-	}
+  public int calculateFrequentRenterPoints() {
+    AtomicInteger frequentRenterPoints = new AtomicInteger(0);
+    _rentals.forEach(it -> {
+      //add frequent renter points
+      frequentRenterPoints.getAndIncrement();
+      //add bonus for a two day new release rental
+      if ((it.getMovie().triggerType() == MovieType.NEW_RELEASE) &&
+          it.getDayRented() > 1) {
+        frequentRenterPoints.getAndIncrement();
+      }
+    });
 
-	public double calculateTotalAmount(){
-		double totalAmount = 0;
-		Enumeration rentals = _rentals.elements();
-		while (rentals.hasMoreElements()) {
-			totalAmount += calculateThisAmount((Rental) rentals.nextElement());
-		}
-		return totalAmount;
-	}
+    return frequentRenterPoints.get();
+  }
 
-	public int calculateFrequentRenterPoints(){
-		int frequentRenterPoints = 0;
-		Enumeration rentals = _rentals.elements();
-		while (rentals.hasMoreElements()) {
-			Rental each = (Rental) rentals.nextElement();
-
-			//add frequent renter points
-			frequentRenterPoints++;
-			//add bonus for a two day new release rental
-			if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE) &&
-					each.getDayRented() > 1) {
-				frequentRenterPoints++;
-			}
-		}
-
-		return frequentRenterPoints;
-	}
-
-	public String getStatement(){
-		Enumeration rentals = _rentals.elements();
-		String result = "Rental Record for " + getName() + "\n";
-		while (rentals.hasMoreElements()) {
-			Rental each = (Rental) rentals.nextElement();
-			//show figures for this rental
-			result += "\t" + each.getMovie().getTitle() +
-					"\t" + String.valueOf(calculateThisAmount(each)) + "\n";
-		}
-		//add footer lines
-		result += "Amount owed is " + String.valueOf(calculateTotalAmount()) + "\n";
-		result += "You earned" + String.valueOf(calculateFrequentRenterPoints()) +
-				" frequent renter points";
-		return result;
-	}
+  public String getStatement() {
+    Enumeration rentals = _rentals.elements();
+    String result = "Rental Record for " + getName() + "\n";
+    while (rentals.hasMoreElements()) {
+      Rental each = (Rental) rentals.nextElement();
+      //show figures for this rental
+      result += "\t" + each.getMovie().get_title() +
+          "\t" + String.valueOf(calculateThisAmount(each)) + "\n";
+    }
+    //add footer lines
+    result += "Amount owed is " + String.valueOf(calculateTotalAmount()) + "\n";
+    result += "You earned" + String.valueOf(calculateFrequentRenterPoints()) +
+        " frequent renter points";
+    return result;
+  }
 }
