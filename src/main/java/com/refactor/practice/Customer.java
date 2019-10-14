@@ -64,8 +64,23 @@ public class Customer {
     return result.toString();
   }
 
+  /*
+  regular movie: 3.5<BR>
+  new movie: 6.0<BR>
+  children movie: 4.5<BR>
+<P>You owe <EM>14.0</EM><P>
+  On this rental you earned <EM>4</EM> frequent renter points<P>
+   */
   public String getStatementHtml() {
-
-    return null;
+    StringBuilder result = new StringBuilder(
+        "<H1>Rentals for <EM>" + getName() + "</EM></H1><P>\n");
+    rentals.forEach(it ->
+        result.append("\t")
+        .append(it.getMovie().getTitle()).append(":\t")
+        .append(calculateThisAmount(it)).append("<BR>\n"));
+    result.append("<P>You owe <EM>").append(calculateTotalAmount()).append("</EM><P>\n");
+    result.append("  On this rental you earned <EM>").append(calculateFrequentRenterPoints())
+        .append("</EM> frequent renter points<P>\n");
+    return result.toString();
   }
 }

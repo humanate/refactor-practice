@@ -14,12 +14,15 @@ public class CustomerTest {
 
   private Customer customer;
   private String baseline;
+  private String baselineHtml;
 
   @Before
   public void setUp() throws IOException {
     customer = new Customer("user1", new Vector<>());
     File file = new File("src/test/java/com/refactor/practice/baseline");
     baseline = FileUtils.readFileToString(file);
+    File htmlFile = new File("src/test/java/com/refactor/practice/baseline.html");
+    baselineHtml = FileUtils.readFileToString(htmlFile);
   }
 
   @Test
@@ -32,6 +35,18 @@ public class CustomerTest {
     String result = customer.getStatement();
     //then
     assertThat(result).isEqualTo(baseline);
+  }
+
+  @Test
+  public void should_get_statement_html_of_rentals() {
+    //given
+    addRental(customer, new RegularMovie("regular movie"), 3);
+    addRental(customer, new NewReleaseMovie("new movie"), 2);
+    addRental(customer, new ChildrenMovie("children movie"), 5);
+    //when
+    String result = customer.getStatementHtml();
+    //then
+    assertThat(result).isEqualTo(baselineHtml);
   }
 
   @Test
