@@ -28,9 +28,7 @@ public class CustomerTest {
   @Test
   public void should_get_statement_of_rentals() {
     //given
-    addRental(customer, new RegularMovie("regular movie"), 3);
-    addRental(customer, new NewReleaseMovie("new movie"), 2);
-    addRental(customer, new ChildrenMovie("children movie"), 5);
+    addRentals();
     //when
     String result = customer.getStatement();
     //then
@@ -40,9 +38,7 @@ public class CustomerTest {
   @Test
   public void should_get_statement_html_of_rentals() {
     //given
-    addRental(customer, new RegularMovie("regular movie"), 3);
-    addRental(customer, new NewReleaseMovie("new movie"), 2);
-    addRental(customer, new ChildrenMovie("children movie"), 5);
+    addRentals();
     //when
     String result = customer.getStatementHtml();
     //then
@@ -52,15 +48,19 @@ public class CustomerTest {
   @Test
   public void calculate_amount_frequent_points_of_rentals() {
     //given
-    addRental(customer, new RegularMovie("regular movie"), 3);
-    addRental(customer, new NewReleaseMovie("new movie"), 2);
-    addRental(customer, new ChildrenMovie("children movie"), 5);
+    addRentals();
     //when
     double amount = customer.calculateTotalAmount();
     double frequentRenterPoints = customer.calculateFrequentRenterPoints();
     //then
     assertThat(amount).isEqualTo(14.0d);
     assertThat(frequentRenterPoints).isEqualTo(4.0d);
+  }
+
+  private void addRentals(){
+    addRental(customer, new RegularMovie("regular movie"), 3);
+    addRental(customer, new NewReleaseMovie("new movie"), 2);
+    addRental(customer, new ChildrenMovie("children movie"), 5);
   }
 
   private void addRental(Customer customer, AbstractMovie movie, int dayRented) {

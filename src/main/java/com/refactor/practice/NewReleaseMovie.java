@@ -13,6 +13,7 @@ public class NewReleaseMovie extends AbstractMovie {
 
   @Override
   public Double doCalculate(Rental rental) {
-    return rental.getDayRented() * 3.0d;
+    double NEW_RELEASE_MOVIE_PER_PRICE = 3.0d;
+    return rental.getDayRented() * NEW_RELEASE_MOVIE_PER_PRICE;
   }
 }

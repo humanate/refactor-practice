@@ -42,10 +42,11 @@ public class Customer {
 
   public int calculateFrequentRenterPoints() {
     AtomicInteger frequentRenterPoints = new AtomicInteger(0);
+    int NEW_RELEASE_MOVIE_BASE_RENTAL_DAY = 1;
     rentals.forEach(it -> {
       frequentRenterPoints.getAndIncrement();
       if ((it.getMovie().triggerType() == MovieType.NEW_RELEASE) &&
-          it.getDayRented() > 1) {
+          it.getDayRented() > NEW_RELEASE_MOVIE_BASE_RENTAL_DAY) {
         frequentRenterPoints.getAndIncrement();
       }
     });
@@ -64,13 +65,6 @@ public class Customer {
     return result.toString();
   }
 
-  /*
-  regular movie: 3.5<BR>
-  new movie: 6.0<BR>
-  children movie: 4.5<BR>
-<P>You owe <EM>14.0</EM><P>
-  On this rental you earned <EM>4</EM> frequent renter points<P>
-   */
   public String getStatementHtml() {
     StringBuilder result = new StringBuilder(
         "<H1>Rentals for <EM>" + getName() + "</EM></H1><P>\n");

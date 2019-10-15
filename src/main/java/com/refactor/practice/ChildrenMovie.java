@@ -13,9 +13,13 @@ public class ChildrenMovie extends AbstractMovie {
 
   @Override
   public Double doCalculate(Rental rental) {
-    if (rental.getDayRented() > 3) {
-      return 1.5d + ((rental.getDayRented() - 3) * 1.5);
+    int CHILDREN_MOVIE_BASE_DAY = 3;
+    double CHILDREN_MOVIE_BASE_PRICE = 1.5d;
+    double CHILDREN_MOVIE_PER_PRICE = 1.5;
+    if (rental.getDayRented() > CHILDREN_MOVIE_BASE_DAY) {
+      return CHILDREN_MOVIE_BASE_PRICE + ((rental.getDayRented() - CHILDREN_MOVIE_BASE_DAY)
+          * CHILDREN_MOVIE_PER_PRICE);
     }
-    return 1.5;
+    return CHILDREN_MOVIE_BASE_PRICE;
   }
 }
