@@ -32,52 +32,57 @@ dependencies {
 // Define the main class for the application
 mainClassName = 'com.refactor.practice.App'
 
-// tag::jacoco-configuration[]
-jacoco {
-    toolVersion = "0.8.4"
-    reportsDir = file("$buildDir/customJacocoReportDir")
-}
-// end::jacoco-configuration[]
-// tag::testtask-configuration[]
 test {
     jacoco {
         destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
         classDumpDir = file("$buildDir/jacoco/classpathdumps")
     }
 }
-// end::testtask-configuration[]
 
-
-// tag::report-configuration[]
 jacocoTestReport {
     reports {
         xml.enabled false
         csv.enabled false
         html.destination file("${buildDir}/jacocoHtml")
     }
-}
-// end::report-configuration[]
 
-// tag::violation-rules-configuration[]
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(
+                    dir: it,
+                    exclude: [
+                            '**/Constant.*',
+                    ]
+            )
+        })
+    }
+}
+
 jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.5
+            }
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.5
+            }
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.5
+            }
+            limit {
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
                 minimum = 0.5
             }
         }
-
-        rule {
-            enabled = false
-            element = 'CLASS'
-            includes = ['org.gradle.*']
-
-            limit {
-                counter = 'LINE'
-                value = 'TOTALCOUNT'
-                maximum = 0.3
-            }
-        }
     }
+    dependsOn(jacocoTestReport)
 }
-// end::violation-rules-configuration[]
+check.dependsOn jacocoTestCoverageVerification

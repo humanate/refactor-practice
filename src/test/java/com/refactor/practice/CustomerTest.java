@@ -57,6 +57,15 @@ public class CustomerTest {
     assertThat(frequentRenterPoints).isEqualTo(4.0d);
   }
 
+  @Test
+  public void throw_runtime_exception_when_Rental_is_NULL() {
+    //given
+//    addRental(customer, null, 3);
+    //when
+    double amount = customer.calculateTotalAmount();
+    //then
+  }
+
   private void addRentals(){
     addRental(customer, new RegularMovie("regular movie"), 3);
     addRental(customer, new NewReleaseMovie("new movie"), 2);
